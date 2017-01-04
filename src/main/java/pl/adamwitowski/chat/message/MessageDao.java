@@ -17,6 +17,11 @@ public class MessageDao {
 		em.persist(message);
 	}
 	
+	public void delete(Integer id){
+		Message messageToDelete = em.find(Message.class, id);
+		em.remove(messageToDelete);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<Message> getAllMessagesFromUsername(String username){
 		return em.createNativeQuery("SELECT * FROM MESSAGE WHERE RECEIVER_ID = ? OR SENDER_ID = ?;", Message.class)

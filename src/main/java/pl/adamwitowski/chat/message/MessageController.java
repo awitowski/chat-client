@@ -28,30 +28,10 @@ public class MessageController {
 		return messageService.getAllMessagesFromUsername(username);
 	}
 	
-	@RequestMapping(value="/all", method = RequestMethod.GET)
-	public void getMessagesFromRemoteServer() {
-		List<Message> remoteMessages = messageRemoteService.getAllMessagesFromRemoteServer();
-		if(!remoteMessages.isEmpty()){
-		for(Message remoteMessage: remoteMessages)
-		messageService.create(remoteMessage);
-		}
-		
+	@RequestMapping(method = RequestMethod.DELETE)
+	public void deleteMessage(@RequestParam Integer id){
+		messageService.delete(id);
 	}
-	
-
-//	@RequestMapping(method = RequestMethod.GET, value = "/{senderId}/{receiverId}/{body}")
-//	public Message createMessage(@PathVariable String senderId, @PathVariable String receiverId,
-//			@PathVariable String body) {
-//		Message message = new Message();
-//		message.setBody(body);
-//		message.setReceiverId(receiverId);
-//		message.setSenderId(senderId);
-//		message.setCreated(new Date());
-//
-//		messageService.create(message);
-//
-//		return message;
-//	}
 	
 	
 	@RequestMapping(method = RequestMethod.POST)

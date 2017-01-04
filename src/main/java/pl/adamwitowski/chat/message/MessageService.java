@@ -21,6 +21,10 @@ public class MessageService {
 		messageDao.create(message);
 	}
 	
+	public void delete(Integer id){
+		messageDao.delete(id);
+	}
+	
 	public List<Message> getAllMessagesFromUsername(String username){
 		return messageDao.getAllMessagesFromUsername(username);
 	}
