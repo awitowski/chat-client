@@ -27,6 +27,8 @@ public class UserController {
 		public List<String> getAllUsers(){
 			return userService.getAllUsernamesWithoutAuthenticatedUsername();
 		}
+	
+	
 	}
 	
 

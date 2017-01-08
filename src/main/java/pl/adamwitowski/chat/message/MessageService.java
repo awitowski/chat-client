@@ -1,6 +1,7 @@
 package pl.adamwitowski.chat.message;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -26,19 +27,36 @@ public class MessageService {
 	}
 	
 	public List<Message> getAllMessagesFromUsername(String username){
-		return messageDao.getAllMessagesFromUsername(username);
+		List<Message> messages = messageDao.getAllMessagesFromUsername(username);
+//		for(Message message: messages){
+//			message.setNewMessage(false);
+//			messageDao.update(message);
+//		}
+		return messages;
 	}
 	
 	public Message createMessageOnRemoteServer(Message message){
 		return messageRemoteService.createMessageOnRemoteServer(message);
 	}
 	
-	public void saveAllMessageFromRemoteServer(){
+	public List<String> saveAllMessagesFromRemoteServer(){
 		List<Message> messages = messageRemoteService.getAllMessagesFromRemoteServer();
 		for(Message message: messages){
+			message.setNewMessage(true);
 			create(message);
 		}
+		return messages.stream().map(Message::getSenderId).collect(Collectors.toList());
 	}
 	
+	public List<Message> getAllNewMessagesFromUsername(String username){
+		return messageDao.getAllNewMessagesFromUsername(username);
+	}
+	
+	public List<String> getAllUsersWithNewMessages(){
+		return messageDao.getAllUsersWithNewMessages();
+	}
+	 public void changeNewMessageColumnValue(Integer id){
+		 messageDao.changeNewMessageColumnValue(id);
+	 }
 
 }

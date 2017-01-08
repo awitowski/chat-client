@@ -29,6 +29,10 @@
 	margin: 0;
 }
 
+.new_message {
+	background-color: red;
+}
+
 .msg-wrap {
 	padding: 10px;
 	height: 400px;

@@ -5,17 +5,22 @@ $.ajaxSetup({
 var presentUser = null;
 var authenticatedUser = null;
 
-$.get('/api/message', function(message) {
-	for (var i = 0; i < message.length; i++) {
-		appendMessage(message[i]);
-	}
-});
+if(presentUser !== null){
+	$.get('/api/message', function(message) {
+		for (var i = 0; i < message.length; i++) {
+			appendMessage(message[i]);
+		}
+	});
+}
+
 
 $.get('/api/user', function(allUsers) {
 	for (var i = 0; i < allUsers.length; i++) {
 		appendUsers(allUsers[i]);
 	}
+	checkUsersWithNewMessage();
 });
+
 
 
 
@@ -80,40 +85,85 @@ function appendMessage(message) {
 		
 		$('#messageBox').scrollTop($('#messageBox')[0].scrollHeight);
 		}	
+		
 }
 
 
-//$(function() {
-//	$('#messageBox').on('click', '#singleMsg', function(){
-//		var element = $(this);
-//	    console.log('clicked');
-//		$('#del-popup').show();
-//		$('#yes-btn').click(function(){
-//			$(element).empty();
-//			$(element).remove();
-//			$('#del-popup').hide();
-//		});
-//		$('#no-btn').click(function() {
-//			$('#del-popup').hide();
-//		});
-//	});
-//	})
+// $(function() {
+// $('#messageBox').on('click', '#singleMsg', function(){
+// var element = $(this);
+// console.log('clicked');
+// $('#del-popup').show();
+// $('#yes-btn').click(function(){
+// $(element).empty();
+// $(element).remove();
+// $('#del-popup').hide();
+// });
+// $('#no-btn').click(function() {
+// $('#del-popup').hide();
+// });
+// });
+// })
 
 function appendUsers(user) {
 	var userName = $('<div class="media-body"></div>').append('<h5 class="media-heading">'
 			+ user + '</h5> <small>send new message</small>');
 	var picture = $('<div class="pull-left"></div>').append('<img class="media-object" alt="48x48" style="width: 48px; height: 48px;" src="http://www.iconsfind.com/wp-content/uploads/2015/08/20150831_55e46b12d72da.png">');
-	var majorDiv = $('<div class="media conversation"></div>').append(picture, userName);
+	var majorDiv = $('<div id = ' + user + ' class="media conversation"></div>').append(picture, userName);
 	$('#users').append(majorDiv);
 	
 	userName.click(function() {
-//		 setInterval(function() {
+
 			 displayAllMessageFromUsername(user);
-//		 }, 3000);
-		
-		presentUser = user;
+			 presentUser = user;
+			 $('#' + user).removeClass('new_message');
 	});
 };
+
+   setInterval(getNewMessagesFromUser, 2000);
+   setInterval(getUsersWithNewMessages, 2000);
+    
+
+    function getNewMessagesFromUser(){
+    	if(presentUser !== null){
+            $.get('/api/message/new_from_user?username=' + presentUser, function(messages) {
+    		for (var i = 0; i < messages.length; i++) {
+    			appendMessage(messages[i]);
+    			$.ajax({
+    				   url: '/api/message/false?id=' + messages[i].id,
+    				   type: 'PUT'
+    				});
+    		}
+    	 });
+        }
+    };
+    
+    function getUsersWithNewMessages(){
+    	
+    	
+    	$.get('/api/message/new_from_remote', function(users){
+    		var user = null;
+    		for(var i = 0; i< users.length; i++){
+    			$('#users').prepend($('#' + users[i]));
+    			$('#' + users[i]).addClass('new_message');
+    		}
+    	}); 
+    } 
+    
+    
+    function checkUsersWithNewMessage() {
+        $.get('/api/message/users_with_new_message', function (users) {
+        	var user = null;
+    		for(var i = 0; i< users.length; i++){
+    			$('#users').prepend($('#' + users[i]));
+    			$('#' + users[i]).addClass('new_message');
+    		}
+        });
+    };
+
+
+    
+
 
 function createEmoticons(input){
 	return input.replace(/:D/g, '<img alt=":D" style="width: 15px; height: 15px;" src="http://www.freeiconspng.com/uploads/happy-emoticons-png-6.png" />')
@@ -144,6 +194,16 @@ $('textarea').keypress(function(e) {
 		createMessage();
         $('textarea').val('');
 	}
+});
+})
+
+
+$(function() {
+$('textarea').click(function(e) {
+	if(presentUser !== null){
+		$('#' + presentUser).removeClass('new_message');
+	}
+	
 });
 })
 

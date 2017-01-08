@@ -22,6 +22,21 @@ public class Message {
 
 	@Column(unique = true)
 	private String messageId;
+	
+	private boolean newMessage;
+	
+	private String body;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date created;
+
+	public boolean isNewMessage() {
+		return newMessage;
+	}
+
+	public void setNewMessage(boolean newMessage) {
+		this.newMessage = newMessage;
+	}
 
 	public String getMessageId() {
 		return messageId;
@@ -31,10 +46,7 @@ public class Message {
 		this.messageId = messageId;
 	}
 
-	private String body;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
+	
 
 	public int getId() {
 		return id;
